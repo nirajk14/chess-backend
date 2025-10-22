@@ -1,4 +1,4 @@
-package com.protontype.chessapp.model;
+package com.protontype.chessapp.model.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
