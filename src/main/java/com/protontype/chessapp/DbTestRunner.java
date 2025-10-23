@@ -1,5 +1,7 @@
 package com.protontype.chessapp;
 
+import io.jsonwebtoken.io.Encoders;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 import java.sql.Connection;
