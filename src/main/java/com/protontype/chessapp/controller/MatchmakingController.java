@@ -15,6 +15,7 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.time.LocalDateTime;
 
 @RestController
+@RequestMapping("/api/v1/matchmaking")
 @RequiredArgsConstructor
 public class MatchmakingController {
 
