@@ -1,4 +1,4 @@
-package com.protontype.chessapp.dto;
+package com.protontype.chessapp.model.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

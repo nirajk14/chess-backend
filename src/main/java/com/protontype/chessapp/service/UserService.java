@@ -1,6 +1,6 @@
 package com.protontype.chessapp.service;
 
-import com.protontype.chessapp.dto.ApiResponse;
+import com.protontype.chessapp.model.dto.response.ApiResponse;
 import com.protontype.chessapp.mapper.SignupMapper;
 import com.protontype.chessapp.model.dto.request.LoginRequest;
 import com.protontype.chessapp.model.dto.request.SignupRequest;

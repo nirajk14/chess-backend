@@ -1,6 +1,6 @@
 package com.protontype.chessapp.controller;
 
-import com.protontype.chessapp.dto.ApiResponse;
+import com.protontype.chessapp.model.dto.response.ApiResponse;
 import com.protontype.chessapp.model.dto.request.LoginRequest;
 import com.protontype.chessapp.model.dto.request.SignupRequest;
 import com.protontype.chessapp.model.dto.response.LoginResponse;
@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1")

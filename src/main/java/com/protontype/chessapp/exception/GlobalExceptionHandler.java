@@ -1,6 +1,6 @@
 package com.protontype.chessapp.exception;
 
-import com.protontype.chessapp.dto.ApiResponse;
+import com.protontype.chessapp.model.dto.response.ApiResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
