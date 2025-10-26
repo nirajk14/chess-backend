@@ -56,13 +56,14 @@ public class UserService {
 
         LoginResponse response = LoginResponse.builder()
                 .username(user.getUsername())
+                .userId(user.getId())
                 .build();
 
         return ApiResponse.success("Login successful", response);
     }
 
-    public String generateToken(String username) {
-        return jwtUtil.generateToken(username);
+    public String generateToken(String username, Long userId) {
+        return jwtUtil.generateToken(username, userId);
     }
 
 }

@@ -30,8 +30,8 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<ApiResponse<LoginResponse>> login(@Valid @RequestBody LoginRequest request) {
         ApiResponse<LoginResponse> response = userService.login(request);
-        if(response.isSuccess()) {
-            String token = userService.generateToken(request.getUsername());
+        if (response.isSuccess()) {
+            String token = userService.generateToken(request.getUsername(), response.getData().getUserId());
             return ResponseEntity.ok()
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                     .body(response);
