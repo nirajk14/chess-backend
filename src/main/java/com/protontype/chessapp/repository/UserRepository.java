@@ -1,6 +1,6 @@
 package com.protontype.chessapp.repository;
 
-import com.protontype.chessapp.model.User;
+import com.protontype.chessapp.model.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
