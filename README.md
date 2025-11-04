@@ -30,8 +30,8 @@ A Spring Boot Application for Chess Backend
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/project-name.git
-cd project-name
+git clone https://github.com/nirajk14/chess-backend.git
+cd chess-backend
 ```
 
 ---
