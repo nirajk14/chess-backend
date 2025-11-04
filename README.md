@@ -134,5 +134,74 @@ Response Body:
 
 --
 
+## 🎮 Matchmaking API (v1)
+
+### Base URL
+`/api/v1/matchmaking`
+
+### 🔹 1. Join Matchmaking Queue
+**Endpoint:** `POST /api/v1/matchmaking/join`  
+**Description:** Adds the authenticated user to the matchmaking queue.  
+**Headers:**  
+| Key | Value | Required |  
+|-----|--------|-----------|  
+| Authorization | Bearer <JWT_TOKEN> | ✅ |  
+**Response:**
+```json
+{
+  "success": true,
+  "message": "Joined matchmaking queue",
+  "data": {
+    "userId": 4,
+    "username": "player1",
+    "joinedAt": "2025-11-04T16:30:30.725"
+  }
+}
+```  
+**Failure Response:**
+```json
+{
+  "success": false,
+  "message": "Missing or invalid token"
+}
+```
+
+### 🔹 2. Subscribe to Matchmaking Events (SSE)
+**Endpoint:** `GET /api/v1/matchmaking/queue/{userId}/sse`  
+**Description:** Opens a Server-Sent Events (SSE) stream for the given user. The server pushes real-time matchmaking status updates (e.g., searching, match_found).  
+**Produces:** `text/event-stream`  
+**Example Initial Event:**
+```
+event: searching
+data: {"status":"searching"}
+```  
+**Example Match Found Event:**
+```
+event: match_found
+data: {"opponentId":5,"opponentUsername":"player2","matchId":101}
+```  
+**Notes:** The connection times out after 10 minutes (600,000 ms). The client should auto-reconnect if disconnected unexpectedly.
+
+### 🧪 Testing Tips
+**Join Queue with cURL:**
+```
+curl -X POST http://localhost:8080/api/v1/matchmaking/join -H "Authorization: Bearer <JWT_TOKEN>"
+```  
+**Connect to SSE Stream:**
+```
+curl http://localhost:8080/api/v1/matchmaking/queue/<USER_ID>/sse
+```  
+You should receive:
+```
+event: searching
+data: {"status":"searching"}
+```  
+and later:
+```
+event: match_found
+data: {"opponentId":5,"opponentUsername":"player2","matchId":101}
+```
+
+
 
 
