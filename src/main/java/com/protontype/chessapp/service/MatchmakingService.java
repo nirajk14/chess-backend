@@ -10,6 +10,7 @@ import com.protontype.chessapp.repository.UserMatchRepository;
 import com.protontype.chessapp.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -18,6 +19,7 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MatchmakingService {
@@ -136,15 +138,18 @@ public class MatchmakingService {
     }
 
     protected void sendSseEvent(Long userId, String eventName, Object payload) {
+        log.info("Sending SSE event {} to user {}", eventName, userId);
         SseEmitter emitter = emitters.get(userId);
         if (emitter == null) return;
         try {
             String json = objectMapper.writeValueAsString(payload);
             emitter.send(SseEmitter.event().name(eventName).data(json));
+            log.info("Sent SSE event {} to user {}", eventName, userId);
         } catch (Exception e) {
             // emitter broken; cleanup
             try { emitter.completeWithError(e); } catch (Exception ignore) {}
             emitters.remove(userId);
+            log.error("Failed to send SSE event {} to user {}", eventName, userId, e);
         }
     }
 }
