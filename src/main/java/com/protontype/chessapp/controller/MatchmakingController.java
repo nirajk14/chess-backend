@@ -9,10 +9,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/matchmaking")
@@ -61,4 +65,14 @@ public class MatchmakingController {
                 .status(HttpStatus.ACCEPTED)
                 .body(ApiResponse.success("Joined matchmaking queue", joinResponse));
     }
+
+    @MessageMapping("/join/{matchId}")
+    public void joinMatch(@DestinationVariable Long matchId,
+                          @Header("simpSessionAttributes") Map<String, Object> sessionAttrs) {
+        Long userId = (Long) sessionAttrs.get("userId");
+        String username = (String) sessionAttrs.get("username");
+
+//        matchmakingService.userJoined(matchId, userId, username); TODO: implement this method
+    }
+
 }
