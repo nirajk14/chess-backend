@@ -1,26 +1,40 @@
 package com.protontype.chessapp.service;
 
 import com.protontype.chessapp.model.domain.MatchRoom;
+import com.protontype.chessapp.model.entity.Match;
 import com.protontype.chessapp.repository.MatchRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 public class MatchingService {
 
+    private final MatchValidationService matchValidationService;
     private final MatchRepository matchRepository;
     private final ConcurrentHashMap<Long, MatchRoom> matchRooms = new ConcurrentHashMap<>();
     private final SimpMessagingTemplate messagingTemplate;
 
-    public MatchingService(MatchRepository matchRepository, SimpMessagingTemplate messagingTemplate) {
+    public MatchingService(MatchValidationService matchValidationService, MatchRepository matchRepository, SimpMessagingTemplate messagingTemplate) {
+        this.matchValidationService = matchValidationService;
         this.matchRepository = matchRepository;
         this.messagingTemplate = messagingTemplate;
     }
 
+
+
     public void userJoined(Long matchId, Long userId, String username) {
+        // Validate match and user
+        boolean allowed = matchValidationService.validateAndJoin(matchId, userId, username);
+        if (!allowed) {
+            messagingTemplate.convertAndSend("/topic/match/" + matchId,
+                    "User not allowed or match doesn't exist.");
+            return;
+        }
         // 1️⃣ Create or get match room
         MatchRoom room = matchRooms.computeIfAbsent(matchId, MatchRoom::new);
 
