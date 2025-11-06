@@ -66,13 +66,4 @@ public class MatchmakingController {
                 .body(ApiResponse.success("Joined matchmaking queue", joinResponse));
     }
 
-    @MessageMapping("/join/{matchId}")
-    public void joinMatch(@DestinationVariable Long matchId,
-                          @Header("simpSessionAttributes") Map<String, Object> sessionAttrs) {
-        Long userId = (Long) sessionAttrs.get("userId");
-        String username = (String) sessionAttrs.get("username");
-
-//        matchmakingService.userJoined(matchId, userId, username); TODO: implement this method
-    }
-
 }
