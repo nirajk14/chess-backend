@@ -16,23 +16,19 @@ public class MatchRoom {
     }
 
     public void addPlayer(Long userId, String username) {
-        players.put(userId, username);
+        players.putIfAbsent(userId, username);
     }
 
     public void removePlayer(Long userId) {
         players.remove(userId);
     }
 
-    public boolean isFull() {
-        return players.size() == 2;
-    }
-
-    public boolean hasStarted() {
-        return started;
-    }
-
-    public void startMatch() {
-        this.started = true;
+    public synchronized boolean tryStartMatch() {
+        if (players.size() == 2 && !started) {
+            started = true;
+            return true;
+        }
+        return false;
     }
 
 }

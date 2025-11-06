@@ -3,7 +3,6 @@ package com.protontype.chessapp.service;
 import com.protontype.chessapp.model.domain.MatchRoom;
 import com.protontype.chessapp.model.entity.Match;
 import com.protontype.chessapp.repository.MatchRepository;
-import jakarta.transaction.Transactional;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -28,35 +27,27 @@ public class MatchingService {
 
 
     public void userJoined(Long matchId, Long userId, String username) {
-        // Validate match and user
-        boolean allowed = matchValidationService.validateAndJoin(matchId, userId, username);
-        if (!allowed) {
+       Optional<Match> validMatch = matchValidationService.getValidMatch(matchId, userId);
+        if (validMatch.isEmpty()) {
             messagingTemplate.convertAndSend("/topic/match/" + matchId,
                     "User not allowed or match doesn't exist.");
             return;
         }
-        // 1️⃣ Create or get match room
         MatchRoom room = matchRooms.computeIfAbsent(matchId, MatchRoom::new);
 
-        // 2️⃣ Add player
         room.addPlayer(userId, username);
-
-        // 3️⃣ Notify current player they joined successfully
         messagingTemplate.convertAndSend(
                 "/topic/match/" + matchId,
                 username + " joined match " + matchId
         );
-
-        // 4️⃣ If both joined, start match and notify all
-        if (room.isFull() && !room.hasStarted()) {
-            room.startMatch();
-            matchRepository.findById(matchId).ifPresent(match -> {
+        if (room.tryStartMatch()) {
+            validMatch.ifPresent(match -> {
                 match.setStatus("ONGOING");
                 matchRepository.save(match);
             });
             messagingTemplate.convertAndSend(
                     "/topic/match/" + matchId,
-                    "✅ Match " + matchId + " started between: " + room.getPlayers().values()
+                    "Match " + matchId + " started between: " + room.getPlayers().values()
             );
         }
     }
@@ -67,7 +58,7 @@ public class MatchingService {
             room.removePlayer(userId);
             messagingTemplate.convertAndSend(
                     "/topic/match/" + matchId,
-                    "❌ Player " + userId + " left match " + matchId
+                    "Player " + userId + " left match " + matchId
             );
             if (room.getPlayers().isEmpty()) {
                 matchRooms.remove(matchId);

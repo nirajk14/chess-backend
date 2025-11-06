@@ -6,23 +6,17 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class MatchValidationService {
     private final MatchRepository matchRepository;
 
     @Transactional
-    public boolean validateAndJoin(Long matchId, Long userId, String username) {
-        // DB operations, lazy collections safe
-        Match match = matchRepository.findById(matchId).orElse(null);
-        if (match == null) return false;
-
-        boolean userExists = match.getUserMatches().stream()
-                .anyMatch(um -> um.getUser().getId().equals(userId));
-
-        if (!userExists) return false;
-
-        // Update match status, etc.
-        return true;
+    public Optional<Match> getValidMatch(Long matchId, Long userId) {
+        return matchRepository.findById(matchId)
+                .filter(match -> match.getUserMatches().stream()
+                        .anyMatch(um -> um.getUser().getId().equals(userId)));
     }
 }
